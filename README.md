@@ -11,8 +11,8 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
   - Find spread commission value from common FX brokers in order to estimate spread cost
   - Develop 1h based RSI strategy for FX with exit and reverse mode, starting cash is $100K
   - Map 1h signals to 1m timeframe for FX
-  - Do analysis for slippage by BPS
-  - Do analysis for spread impact
+  - Do analysis for slippage by BPS, make sure to include sensitivity test by discretized sigmas
+  - Do analysis for spread impact, and also include sensitivity by discretized sigmas
   - Combine spread cost with slippage cost and extract final equity in dollar term
   - Do Monte-Carlo Simulation and extract common metrics like risk of ruin, DSR
   - Calculate maximum drawdown from the simulations
@@ -26,7 +26,7 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
   - Find taker fee value by bps from common crypto brokers in order to estimate commission cost
   - Develop 1h based RSI strategy for Crypto with exit and reverse mode, starting cash is $100K
   - Map 1h signals to 1m timeframe for Crypto
-  - Do analysis for slippage by BPS
+  - Do analysis for slippage by BPS, include sensitivity test by discretized sigmas
   - Combine commission fee cost with slippage by BPS cost and extract dollar based equity
   - Do Monte-Carlo Simulation and extract metrics like risk of ruin and DSR
   - Calculate maximum drawdown from the simulations

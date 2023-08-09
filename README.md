@@ -20,7 +20,7 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
   - Compare RSI strategy with or without trading cost involved
   
 
-# Commission fee based trading cost analysis related tasks'
+# Commission fee based trading cost analysis related tasks
 
   - Find Crypto data with 1minute granularity
   - Find taker fee value by bps from common crypto brokers in order to estimate commission cost
@@ -35,5 +35,12 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
 
 
 # Miscs
+
+
+# Refernces
+
+  - Position sizing for practitioners 
+    https://quantfiction.com/2018/12/20/position-sizing-for-practitioners-part-3-a-portfolio-approach/
+    
 
 

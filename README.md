@@ -40,7 +40,7 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
 # Refernces
 
   - Position sizing for practitioners 
-    https://quantfiction.com/2018/12/20/position-sizing-for-practitioners-part-3-a-portfolio-approach/
+      https://quantfiction.com/2018/12/20/position-sizing-for-practitioners-part-3-a-portfolio-approach/
     
 
 

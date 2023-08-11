@@ -1,4 +1,5 @@
 statsmodels
+scipy
 matplotlib
 mplfinance
 jupyter

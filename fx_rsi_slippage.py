@@ -149,8 +149,9 @@ df_eval['short_entry'] = df_eval['short_entry'].shift(timeframe_by_minute+look_a
 
 # Multiple scenarios are like how many minutes after an order executed.
 for executed_after_minute in range(1, 5+1):
-    df_eval[f"Close_{executed_after_minute}"       ] = df_eval[f"Close"].shift(executed_after_minute)
-    df_eval[f"long_slippage{executed_after_minute}"] = np.nan
+    df_eval[f"Close_{executed_after_minute}"        ] = df_eval[f"Close"].shift(executed_after_minute)
+    df_eval[f"long_slippage{executed_after_minute}" ] = np.nan
+    df_eval[f"short_slippage{executed_after_minute}"] = np.nan
 
 
 # How much changes occured after order executed
@@ -186,9 +187,9 @@ df_eval[df_eval['short_entry'].notnull()]
 # Slippage by bps distribution after order executed x minutes
 slippage_level = 5
 _, axs = plt.subplots(1, figsize=(18, 6))
-l1 = axs.hist(df_eval[df_eval[f"long_slippage{slippage_level}_bps" ].notnull()][f"long_slippage{slippage_level}_bps" ].values, bins=300, range=(-15.0, 15.0), label="Long slippage BPS" , color='g')
-l2 = axs.hist(df_eval[df_eval[f"short_slippage{slippage_level}_bps"].notnull()][f"short_slippage{slippage_level}_bps"].values, bins=300, range=(-15.0, 15.0), label="Short slippage BPS", color='r')
-axs.set_title(f"Slippage after {slippage_level}m by BPS")
+l1 = axs.hist(df_eval[df_eval[f"long_slippage{slippage_level}_bps" ].notnull()][f"long_slippage{slippage_level}_bps" ].values, bins=300, range=(-40.0, 40.0), label="Long slippage BPS" , color='g')
+l2 = axs.hist(df_eval[df_eval[f"short_slippage{slippage_level}_bps"].notnull()][f"short_slippage{slippage_level}_bps"].values, bins=300, range=(-40.0, 40.0), label="Short slippage BPS", color='r')
+axs.set_title(f"RSI_1H strategy's slippage after {slippage_level}m by BPS")
 plt.show();
 
 

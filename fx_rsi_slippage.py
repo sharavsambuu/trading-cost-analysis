@@ -157,15 +157,12 @@ for idx, row in df[df['position']==-1].iterrows():
     if idx in df_eval.index:
         df_eval.at[idx, 'short_entry'] = float(row['Close'])
 
-
-look_ahead_shift = 1
-df_eval['long_entry' ] = df_eval['long_entry' ].shift(timeframe_by_minute+look_ahead_shift)
-df_eval['short_entry'] = df_eval['short_entry'].shift(timeframe_by_minute+look_ahead_shift)
-
+df_eval['long_entry' ] = df_eval['long_entry' ].shift(timeframe_by_minute)
+df_eval['short_entry'] = df_eval['short_entry'].shift(timeframe_by_minute)
 
 # Multiple scenarios are like how many minutes after an order executed.
 for executed_after_minute in range(1, 4+1):
-    df_eval[f"Close_{executed_after_minute}"            ] = df_eval[f"Close"].shift(executed_after_minute)
+    df_eval[f"Close_{executed_after_minute}"            ] = df_eval[f"Close"].shift(timeframe_by_minute+executed_after_minute)
     df_eval[f"long_slippage{executed_after_minute}_pct" ] = np.nan
     df_eval[f"short_slippage{executed_after_minute}_pct"] = np.nan
 

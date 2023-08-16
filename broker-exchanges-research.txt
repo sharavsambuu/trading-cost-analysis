@@ -1,0 +1,38 @@
+
+----- MOTFX
+https://www.motforex.com/en/trade?nextpage=accounts#account-table
+
+----- AvaTrade
+https://www.avatrade.com/trading-info/financial-instruments-index/forex
+https://www.avatrade.com/trading-info/trading-calculator
+
+----- ICMarkets
+They provide 2 fee model
+- Standard, it is spread based
+- Raw Spread, commission fee, $3.5 per 100,000 units traded, commission is charged USD value
+https://torodemotrading.com/ic-markets-fees/
+https://www.icmarkets.com/global/en/trading-pricing/spreads
+
+
+---------- Crypto exchanges ----------
+https://bitcompare.net/platforms
+
+----- Binance
+Trade fee is 0.1% commission for most trades
+BNB is 25% discount
+https://www.binance.com/en/support/faq/fee-structure-on-binance-115000429332
+https://www.binance.com/en/fee/trading
+https://blockduo.com/binance-calculator/
+https://www.zenledger.io/blog/binance-fee-calculator/
+
+----- Bitstamp
+They charge both spread and commission
+Tiered trading fee is based on 30-day trading volume
+The fee ranges from 0%-0.5% for both makers and takers
+If rolling 30-day trading volume is under 1000$ trading fee is 0.
+https://www.investopedia.com/bitstamp-review-5211484
+https://www.bitstamp.net/fee-schedule/
+https://www.bitstamp.net/faq/how-are-the-trading-fees-determined-at-bitstamp/
+https://www.business2community.com/cryptocurrency/bitstamp-review
+
+

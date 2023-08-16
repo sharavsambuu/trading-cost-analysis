@@ -23,14 +23,31 @@ import mplfinance        as mpf
 
 
 #%%
-timeframe = '1H'
-
 df_ = pd.read_csv("./data/USDJPY.csv", parse_dates=True, index_col="datetime")
+
+
+#%%
+
+
+#%%
+timeframe_by_hours  = 24
+timeframe_by_minute = timeframe_by_hours*60
+
+
+#%%
+timeframe_by_minute = 30
+
+
+#%%
+timeframe = f"{timeframe_by_minute}Min"
 
 df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
 df.dropna(inplace=True) # Dropping because of FX doesn't trade during weekends
 
 df
+
+
+#%%
 
 
 #%%
@@ -88,7 +105,7 @@ df['position'].value_counts()
 
 
 #%%
-plot_df = df["2002-10-12 10:00:00":"2003-03-10"].copy(deep=True)
+plot_df = df["2020-01-12 10:00:00":"2022-03-10"].copy(deep=True)
 
 plot_df['rsi_lower'     ] = rsi_lower
 plot_df['rsi_upper'     ] = rsi_upper
@@ -107,7 +124,7 @@ apds = [
 
 mpf.plot(
     plot_df, type='candle', addplot=apds, figsize=(22, 10), figscale=1.6, 
-    title=f"Candles and RSI{rsi_period}",
+    title=f"RSI{rsi_period}, timeframe {timeframe_by_minute}",
     style='binance', volume=True, volume_panel=2, panel_ratios=(6,2,1), show_nontrading=False
     )
 
@@ -141,43 +158,30 @@ for idx, row in df[df['position']==-1].iterrows():
         df_eval.at[idx, 'short_entry'] = float(row['Close'])
 
 
-timeframe_by_minute = 60
-look_ahead_shift    = 1
+look_ahead_shift = 1
 df_eval['long_entry' ] = df_eval['long_entry' ].shift(timeframe_by_minute+look_ahead_shift)
 df_eval['short_entry'] = df_eval['short_entry'].shift(timeframe_by_minute+look_ahead_shift)
 
 
 # Multiple scenarios are like how many minutes after an order executed.
-for executed_after_minute in range(1, 5+1):
-    df_eval[f"Close_{executed_after_minute}"        ] = df_eval[f"Close"].shift(executed_after_minute)
-    df_eval[f"long_slippage{executed_after_minute}" ] = np.nan
-    df_eval[f"short_slippage{executed_after_minute}"] = np.nan
+for executed_after_minute in range(1, 4+1):
+    df_eval[f"Close_{executed_after_minute}"            ] = df_eval[f"Close"].shift(executed_after_minute)
+    df_eval[f"long_slippage{executed_after_minute}_pct" ] = np.nan
+    df_eval[f"short_slippage{executed_after_minute}_pct"] = np.nan
 
+# How much changes by percentage occured after order executed
+for executed_after_minute in range(1, 4+1):
+    df_eval[f"long_slippage{executed_after_minute}_pct" ] = (df_eval[f"Close_{executed_after_minute}"] - df_eval[f"long_entry" ])/df_eval['long_entry' ]
+    df_eval[f"short_slippage{executed_after_minute}_pct"] = (df_eval[f"Close_{executed_after_minute}"] - df_eval[f"short_entry"])/df_eval['short_entry']
 
-# How much changes occured after order executed
-for slippage_level in range(1, 5+1):
-    df_eval[f"long_slippage{slippage_level}" ] = df_eval[f"Close_{slippage_level}"] - df_eval[f"long_entry"            ]
-    df_eval[f"short_slippage{slippage_level}"] = df_eval[f"short_entry"           ] - df_eval[f"Close_{slippage_level}"]
-    pass
+# Convert slippage by percentage to slippage by bps
+for executed_after_minute in range(1, 4+1):
+    df_eval[f"long_slippage{executed_after_minute}_bps" ] = (df_eval[f"long_slippage{executed_after_minute}_pct" ]*100.0)
+    df_eval[f"short_slippage{executed_after_minute}_bps"] = (df_eval[f"short_slippage{executed_after_minute}_pct"]*100.0)
 
-# Convert slippages to bps
-for slippage_level in range(1, 5+1):
-    df_eval[f"long_slippage{slippage_level}_bps" ] = ((df_eval[f"long_slippage{slippage_level}" ]*100.0)/df_eval['Close'])*100.0
-    df_eval[f"short_slippage{slippage_level}_bps"] = ((df_eval[f"short_slippage{slippage_level}"]*100.0)/df_eval['Close'])*100.0
-
-
-df_eval
 
 
 #%%
-
-
-#%%
-df_eval[df_eval['long_entry' ].notnull()]
-
-
-#%%
-df_eval[df_eval['short_entry'].notnull()]
 
 
 #%%
@@ -185,11 +189,28 @@ df_eval[df_eval['short_entry'].notnull()]
 
 #%%
 # Slippage by bps distribution after order executed x minutes
-slippage_level = 5
-_, axs = plt.subplots(1, figsize=(18, 6))
-l1 = axs.hist(df_eval[df_eval[f"long_slippage{slippage_level}_bps" ].notnull()][f"long_slippage{slippage_level}_bps" ].values, bins=300, range=(-40.0, 40.0), label="Long slippage BPS" , color='g')
-l2 = axs.hist(df_eval[df_eval[f"short_slippage{slippage_level}_bps"].notnull()][f"short_slippage{slippage_level}_bps"].values, bins=300, range=(-40.0, 40.0), label="Short slippage BPS", color='r')
-axs.set_title(f"RSI_1H strategy's slippage after {slippage_level}m by BPS")
+
+_, axs = plt.subplots(2, 2, figsize=(18, 8))
+
+range_by_bps = (-1.0, 1.0)
+
+l11 = axs[0,0].hist(df_eval[df_eval[f"long_slippage1_bps" ].notnull()][f"long_slippage1_bps" ].values, bins=300, range=range_by_bps, label="Long slippage BPS" , color='g')
+l12 = axs[0,0].hist(df_eval[df_eval[f"short_slippage1_bps"].notnull()][f"short_slippage1_bps"].values, bins=300, range=range_by_bps, label="Short slippage BPS", color='r')
+axs[0,0].set_title(f"RSI{rsi_period}, timeframe {timeframe_by_minute}m, slippage after 1m by BPS")
+
+l21 = axs[0,1].hist(df_eval[df_eval[f"long_slippage2_bps" ].notnull()][f"long_slippage2_bps" ].values, bins=300, range=range_by_bps, label="Long slippage BPS" , color='g')
+l22 = axs[0,1].hist(df_eval[df_eval[f"short_slippage2_bps"].notnull()][f"short_slippage2_bps"].values, bins=300, range=range_by_bps, label="Short slippage BPS", color='r')
+axs[0,1].set_title(f"RSI{rsi_period}, timeframe {timeframe_by_minute}m, slippage after 2m by BPS")
+
+l31 = axs[1,0].hist(df_eval[df_eval[f"long_slippage3_bps" ].notnull()][f"long_slippage3_bps" ].values, bins=300, range=range_by_bps, label="Long slippage BPS" , color='g')
+l32 = axs[1,0].hist(df_eval[df_eval[f"short_slippage3_bps"].notnull()][f"short_slippage3_bps"].values, bins=300, range=range_by_bps, label="Short slippage BPS", color='r')
+axs[1,0].set_title(f"RSI{rsi_period}, timeframe {timeframe_by_minute}m, slippage after 3m by BPS")
+
+l41 = axs[1,1].hist(df_eval[df_eval[f"long_slippage4_bps" ].notnull()][f"long_slippage4_bps" ].values, bins=300, range=range_by_bps, label="Long slippage BPS" , color='g')
+l42 = axs[1,1].hist(df_eval[df_eval[f"short_slippage4_bps"].notnull()][f"short_slippage4_bps"].values, bins=300, range=range_by_bps, label="Short slippage BPS", color='r')
+axs[1,1].set_title(f"RSI{rsi_period}, timeframe {timeframe_by_minute}m, slippage after 4m by BPS")
+
+plt.tight_layout()
 plt.show();
 
 

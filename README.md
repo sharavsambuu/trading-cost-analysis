@@ -41,6 +41,10 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
 
   - Position sizing for practitioners 
       https://quantfiction.com/2018/12/20/position-sizing-for-practitioners-part-3-a-portfolio-approach/
-    
+  - Some frame of reference for 4H timeframe
+      https://twitter.com/pedma7/status/1691419485117599747
+
+
+
 
 

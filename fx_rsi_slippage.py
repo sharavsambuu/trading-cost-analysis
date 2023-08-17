@@ -190,7 +190,7 @@ for executed_after_minute in range(1, 4+1):
 
 _, axs = plt.subplots(2, 2, figsize=(18, 8))
 
-range_by_bps = (-1.0, 1.0)
+range_by_bps = (-0.2, 0.2)
 
 l11 = axs[0,0].hist(df_eval[df_eval[f"long_slippage1_bps" ].notnull()][f"long_slippage1_bps" ].values, bins=300, range=range_by_bps, label="Long slippage BPS" , color='g')
 l12 = axs[0,0].hist(df_eval[df_eval[f"short_slippage1_bps"].notnull()][f"short_slippage1_bps"].values, bins=300, range=range_by_bps, label="Short slippage BPS", color='r')

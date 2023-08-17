@@ -1,6 +1,10 @@
 
 Trading fee would be different depending on account size, so It would be
 helpful to choose account size for analyzing trading fee or commission impact.
+Generally, it is preferrable to use cash based equity analysis for commission
+impact rather than based on cumulative sum of raw returns, and after that we
+can apply commission impact expressed by BPS to raw return based algo analysis.
+My initial guess is like most of retail traders are belongs to mini account range.
 
 
 Micro Accounts          : $100       - $1,000

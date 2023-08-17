@@ -1,0 +1,14 @@
+
+Trading fee would be different depending on account size, so It would be
+helpful to choose account size for analyzing trading fee or commission impact.
+
+
+Micro Accounts          : $100       - $1,000
+Mini Accounts           : $1,000     - $10,000
+Small Accounts          : $10,000    - $25,000
+Intermediate Accounts   : $25,000    - $50,000
+Mid-size Accounts       : $50,000    - $100,000
+Large Accounts          : $100,000   - $500,000
+Very Large Accounts     : $500,000   - $1 million
+High Net Worth Accounts : $1 million - $10 million
+Institutional Accounts  : $10 million and above

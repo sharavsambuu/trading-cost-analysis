@@ -97,7 +97,7 @@ plt.show();
 _, axs = plt.subplots(1, figsize=(18, 8))
 
 plot_start = "2023-08-06"
-plot_end   = "2023-08-08"
+plot_end   = "2023-08-07"
 
 for broker, _ in df_dict.items():
     axs.plot(df_dict[broker][plot_start:plot_end]["Volume"], label=f"{broker}")
@@ -111,12 +111,54 @@ plt.show();
 
 
 #%%
+_, axs = plt.subplots(2, figsize=(18, 12), gridspec_kw={'height_ratios': [3, 1]})
+
+plot_start = "2023-08-06"
+plot_end   = "2023-08-08"
+
+broker1 = "icmarkets"
+broker2 = "alpari"
+
+axs[0].plot(df_dict[broker1][plot_start:plot_end]["Close"], label=f"{broker1} price")
+axs[0].plot(df_dict[broker2][plot_start:plot_end]["Close"], label=f"{broker2} price")
+
+axs[1].plot(df_dict[broker1][plot_start:plot_end]["Volume"], label=f"{broker1} volume")
+axs[1].plot(df_dict[broker2][plot_start:plot_end]["Volume"], label=f"{broker2} volume")
+
+axs[0].legend()
+axs[1].legend()
+
+plt.tight_layout()
+plt.show();
 
 
 #%%
 
 
 #%%
+
+
+#%%
+from itertools import combinations
+
+plot_start = "2023-08-06"
+plot_end   = "2023-08-08"
+
+for (broker1, broker2) in list(combinations(list(df_dict.keys()), 2)):
+
+    _, axs = plt.subplots(2, figsize=(18, 8), gridspec_kw={'height_ratios': [3, 1]})
+
+    axs[0].plot(df_dict[broker1][plot_start:plot_end]["Close"], label=f"{broker1} price")
+    axs[0].plot(df_dict[broker2][plot_start:plot_end]["Close"], label=f"{broker2} price")
+
+    axs[1].plot(df_dict[broker1][plot_start:plot_end]["Volume"], label=f"{broker1} volume")
+    axs[1].plot(df_dict[broker2][plot_start:plot_end]["Volume"], label=f"{broker2} volume")
+
+    axs[0].legend()
+    axs[1].legend()
+
+    plt.tight_layout()
+    plt.show();
 
 
 #%%

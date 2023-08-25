@@ -46,6 +46,20 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
     https://twitter.com/pedma7/status/1691419485117599747
     https://twitter.com/ThePythonQuant/status/1691552227943416157
 
+  - Modeling Transaction Costs for Algorithmic Strategies
+    https://www.youtube.com/watch?v=2w48B3U87a8
+
+  - What are transaction costs and how do they impact your algorithm’s performance
+    https://www.youtube.com/watch?v=LAUKOjZvvQQ
+
+  - Calculating Market Impact
+    https://quantopian-archive.netlify.app/forum/threads/calculating-market-impact.html
+
+  - Market Impact Model Notebook
+    https://notebook.community/quantopian/research_public/notebooks/lectures/Market_Impact_Model/notebook
+
+
+
 
 
 

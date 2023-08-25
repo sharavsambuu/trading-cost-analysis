@@ -58,6 +58,19 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
   - Market Impact Model Notebook
     https://notebook.community/quantopian/research_public/notebooks/lectures/Market_Impact_Model/notebook
 
+  - Modelling Transaction Costs and Market Impact
+    https://bsic.it/modelling-transaction-costs-and-market-impact/
+
+  - Market Impact: Empirical Evidence, Theory and Practice Emilio Said
+    https://hal.science/hal-03668669v1/file/Market_Impact_Empirical_Evidence_Theory_and_Practice.pdf
+
+  - Quants turn to machine learning to model market impact
+    https://www.risk.net/asset-management/4644191/quants-turn-to-machine-learning-to-model-market-impact
+
+  - Retaining Alpha: The Effect of Trade Size and Rebalancing Frequency on FX Strategy Returns
+    https://www.econstor.eu/bitstream/10419/216539/1/cesifo1_wp8143.pdf
+
+    
 
 
 

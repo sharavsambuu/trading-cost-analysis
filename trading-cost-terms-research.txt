@@ -1,0 +1,67 @@
+
+# Fee
+
+	A fee is a broader term that encompasses various costs associated with trading and maintaining an account.
+	Fees can include :
+		- commissions
+		- account maintainance fee
+		- withdrawal fee
+		- inactivity fee 
+		etc
+
+
+# Commisison 
+
+	A commisison is a percentage of the trade's value that you have to pay to a broker or exchange for executing
+	the trade on your behalf.
+	It is a direct cost associated with trading
+
+
+# Spread
+
+	A spread is difference between bid(selling) price and the ask(buying) price of a financial instrument.
+	This cost arises because you typically buy at the highest as price and sell at the lower bid price.
+	It is an implicit cost of entering and exiting a trade.
+
+
+# Slippage
+
+	A Slippage is the difference between the expected price of a trade and the actual price at which the trade is executed.
+	Can have both positive and negative effects on a tade's outcome. It is very important factor in algo trading.
+	This is an implicit cost in trading
+
+
+# Market Impact
+
+	A market impact is the the impact your trading activity has on the market itself, particularly whe you execute large position
+	on illiquid markets
+
+
+# Tax
+
+	A tax is an expenses incurred due to taxes on capital gains or trading profit, it is typically subject to taxation.
+	The amount you owe in taxes constitutes the tax cost.
+
+
+# Direct cost
+
+	- commissions
+	- fees
+	- taxes
+
+
+# Implicit cost
+
+	- spread 
+	- slippage 
+	- opportunity cost 
+	- market impact cost
+	- latency cost 
+	- spread decay cost
+	- tax efficiency cost
+	etc
+
+
+# Illiquid market
+
+	It is markets have limited trading activity and low trading volumes for a particular asset.

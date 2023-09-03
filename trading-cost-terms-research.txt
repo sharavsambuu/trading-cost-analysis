@@ -65,3 +65,24 @@
 # Illiquid market
 
 	It is markets have limited trading activity and low trading volumes for a particular asset.
+
+
+# BPS
+
+	BPS stands for Basis Point, and common unit of measurement in changes in financial instrument price
+	1 BPS     = 0.01% (one one-hundredth of a 1 percent)
+	25 BPS    = 0.25%
+	7% change = 700 BPS
+	etc
+
+
+# Pips
+
+	A pip is the smallest unit of price movement for any currency pair.	
+	mostly 1BPS = 1pips 
+	JPY based currency 
+		1 pip = 0.01 = 1/100
+		ie. USDJPY : 80.01 to 80.01 is one pip move
+	All other pairs
+		1 pip = 0.0001 = 1/10,000
+		ie. EURUSD  : 1.4000 to 1.4001 is one pip move

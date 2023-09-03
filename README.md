@@ -9,6 +9,8 @@ Why? Because trading cost is crutial to develop more robust and more realistic s
 
   - Find FX data with 1minute granularity, mbe EURUSD or USDJPY
   - Find spread commission value from common FX brokers in order to estimate spread cost
+  - Try to estimate BID and ASK spreads using rolling average
+  - Estimated the BPS cost from the rolling spread averages.
   - Develop 1h based RSI strategy for FX with exit and reverse mode, starting cash is $100K
   - Map 1h signals to 1m timeframe for FX
   - Do analysis for slippage by BPS, make sure to include sensitivity test by discretized sigmas

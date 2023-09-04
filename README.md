@@ -5,6 +5,14 @@ Use simple RSI based strategy with exit and reverse mode.
 Why? Because trading cost is crutial to develop more robust and more realistic strategies, that's why.
 
 
+# Dollar bars related task
+
+  - Form dollar bars from 1 minute or 5 minute data both fx and crypto with some dollar threshold
+  - Make sure to cache and continuesly update 1 minute data
+  - Generate some signals maybe based on RSI
+  - Assess what does slippages looks in dollar bars, can it be better than time based bars?
+  
+
 # Spread based trading cost analysis related tasks
 
   - Find FX data with 1minute granularity, mbe EURUSD or USDJPY

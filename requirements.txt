@@ -12,4 +12,4 @@ selenium
 beautifulsoup4
 webdriver-manager
 click
-
+yfinance

@@ -23,19 +23,19 @@ import mplfinance        as mpf
 
 
 #%%
-df_ = pd.read_csv("./data/BTCUSDT.csv", parse_dates=True)
-df_ = df_.set_index(pd.DatetimeIndex(df_['datetime']))
-del df_['datetime']
-
-
-#%%
+df_ = pd.read_csv("/home/sambu/src/dev/binance-history-downloader/data/klines/spot-1m/minute/BTCUSDT.csv", parse_dates=True, index_col=0)
+df_.index = pd.DatetimeIndex(df_.index)
 df_
 
+
+#%%
+df_['Close'].plot()
+
 #%%
 
 
 #%%
-timeframe_by_hours  = 24
+timeframe_by_hours  = 12
 timeframe_by_minute = timeframe_by_hours*60
 
 
@@ -47,8 +47,7 @@ timeframe_by_minute = 30
 timeframe = f"{timeframe_by_minute}Min"
 
 df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
-df.dropna(inplace=True) # Dropping because of FX doesn't trade during weekends
-
+df.dropna(inplace=True)
 df
 
 
@@ -120,8 +119,8 @@ plot_df['short_position'] = plot_df[plot_df['position']==-1]['Close']
 plot_df['long_position' ] = plot_df[plot_df['position']== 1]['Close']
 
 apds = [
-    mpf.make_addplot(plot_df['long_position' ], panel=0, type='scatter', markersize=120, marker='^', color='g'),
-    mpf.make_addplot(plot_df['short_position'], panel=0, type='scatter', markersize=120, marker='v', color='r'),
+    mpf.make_addplot(plot_df['long_position' ], panel=0, type='scatter', markersize=20, marker='^', color='g'),
+    mpf.make_addplot(plot_df['short_position'], panel=0, type='scatter', markersize=20, marker='v', color='r'),
     mpf.make_addplot(plot_df[f"rsi_{rsi_period}"], panel=1),
     mpf.make_addplot(plot_df[f"rsi_lower"], panel=1, color='g', linestyle='--'),
     mpf.make_addplot(plot_df[f"rsi_upper"], panel=1, color='r', linestyle='--'),

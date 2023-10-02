@@ -37,8 +37,8 @@ df['Close'].plot()
 #%%
 # Signal extraction
 
-df['MA50' ] = df['Close'].rolling(window=50 ).mean()
-df['MA200'] = df['Close'].rolling(window=200).mean()
+df['MA50' ] = df['Close'].rolling(window=20).mean()
+df['MA200'] = df['Close'].rolling(window=50).mean()
 
 df['Signal'] = 0
 df.loc[((df['MA50'] > df['MA200']) & (df['MA50'].shift(1) <= df['MA200'].shift(1))), 'Signal'] =  1
@@ -161,6 +161,7 @@ qs.stats.sharpe(position_df['Account Change'])
 
 
 #%%
+position_df["Account History"].plot()
 
 
 # %%

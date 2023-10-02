@@ -1,9 +1,10 @@
 #%%
-# MA Cross Backtesting on 1H BTC with following trade costs
+# MA Cross Backtesting on 1H BTC with following trade costs and timeframes
 # - Slippage is 0.5BPS
 # - Taker fee is 0.04%
-# - Initial capital is 5000.0$
-# - Risk per trade is 5%
+# - Initial capital is 10000.0$
+# - Position size per trade is 2% of account
+# - Timeframe is 1H
 # 
 
 #%%
@@ -24,7 +25,7 @@ import matplotlib.pyplot as plt
 
 
 #%%
-df = yf.download('BTC-USD', interval='1h', period='12mo')
+df = yf.download('BTC-USD', interval='1h', period='23mo')
 df
 
 #%%
@@ -50,15 +51,15 @@ df['Signal'].value_counts()
 
 
 #%%
-plot_df = df["2022-11-01":"2023-03-01"]
+plot_df = df["2021-01-01":]
 
-fig, ax1 = plt.subplots(1, figsize=(12, 8), sharex=True)
+fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 
 ax1.plot(plot_df.index, plot_df['Close'], label='Close', color='black')
 ax1.plot(plot_df['MA200'], color='blue' )
 ax1.plot(plot_df['MA50' ], color='green')
-ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=10, color='green', label='Long' )
-ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=10, color='red'  , label='Short')
+ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=8, color='green', label='Long' )
+ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=8, color='red'  , label='Short')
 ax1.set_ylabel('Price')
 ax1.set_title('BTC-USD Signals')
 ax1.legend()
@@ -72,9 +73,9 @@ plt.show()
 
 
 #%%
-# position tracking 
-slippage_bps     = 0.5 / 10000 # 0.5BPS
+# Position tracking with slippage
 
+slippage_bps     = 0.5 / 10000 # 0.5BPS
 position         = 0
 entry_timestamp  = None
 entry_price      = 0
@@ -107,9 +108,9 @@ position_df['cumret'] = position_df['Pct Change'].cumsum()
 
 
 #%%
-initial_capital    = 5000.0 # Initial capital in dollars
-commission_fee     = 0.04   # 0.04% commission fee per trade
-risk_per_trade     = 0.05   # 5% risk per trade
+initial_capital    = 10000.0 # Initial capital in dollars
+commission_fee     = 0.04    # 0.04% commission fee per trade
+position_per_trade = 0.02    # 2% of position size per trade
 
 account_balance = initial_capital
 balance_changes = []
@@ -117,9 +118,9 @@ balance_changes = []
 # Iterate through each trade in the position history
 for index, trade in position_df.iterrows():
     pct_change       = trade['Pct Change']
-    amount_at_risk   = account_balance * risk_per_trade
-    dollar_change    = amount_at_risk  * pct_change
-    commission       = amount_at_risk  * (commission_fee/100.0)
+    position_size    = account_balance * position_per_trade
+    dollar_change    = position_size * pct_change
+    commission       = position_size * (commission_fee/100.0)
     balance_change   = dollar_change - commission
     account_balance += balance_change
     balance_changes.append(balance_change)

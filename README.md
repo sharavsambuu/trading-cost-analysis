@@ -1,50 +1,39 @@
 # Trading-cost-analysis
 
-The goal of this repo is to make sense of how trading cost impacted to trading strategies.
-Use simple RSI based strategy with exit and reverse mode.
-Why? Because trading cost is crutial to develop more robust and more realistic strategies, that's why.
+  The goal of this repo is to make sense of how trading cost impacted to trading strategies.
+  Trading cost is crutial to develop more robust and more realistic strategies.
 
 
-# Dollar bars related task
 
-  - Form dollar bars from 1 minute or 5 minute data both fx and crypto with some dollar threshold
-  - Make sure to cache and continuesly update 1 minute data
-  - Generate some signals maybe based on RSI
-  - Assess what does slippages looks in dollar bars, can it be better than time based bars?
-  
+# Commission fee based trading cost analysis
 
-# Spread based trading cost analysis related tasks
+  Mostly crypto markets like binance charge through commission fee which is certain percentage of total traded value.
+  Experiment on how many BPS of slippage happened from signals generated on 1H
+    crypto_rsi_slippage.py
+  From the slippage experiment I estimated 0.5BPS is ideal for BTC 1H slippage and backtested with 0.04% commission
+    btc_macross_backtesting.py
+  Other backtesting method is to map signals from higher timeframe to timeframe with lower granularity like 1m timeframe
+    btc_macross_backtesting_1m.py
 
-  - Find FX data with 1minute granularity, mbe EURUSD or USDJPY
-  - Find spread commission value from common FX brokers in order to estimate spread cost
-  - Try to estimate BID and ASK spreads using rolling average
-  - Estimated the BPS cost from the rolling spread averages.
-  - Develop 1h based RSI strategy for FX with exit and reverse mode, starting cash is $100K
-  - Map 1h signals to 1m timeframe for FX
-  - Do analysis for slippage by BPS, make sure to include sensitivity test by discretized sigmas
-  - Do analysis for spread impact, and also include sensitivity by discretized sigmas
-  - Combine spread cost with slippage cost and extract final equity in dollar term
-  - Do Monte-Carlo Simulation and extract common metrics like risk of ruin, DSR
-  - Calculate maximum drawdown from the simulations
-  - Use Position sizing based on maximum drawdown, generate dollar based equity again
-  - Compare RSI strategy with or without trading cost involved
-  
 
-# Commission fee based trading cost analysis related tasks
 
-  - Find Crypto data with 1minute granularity
-  - Find taker fee value by bps from common crypto brokers in order to estimate commission cost
-  - Develop 1h based RSI strategy for Crypto with exit and reverse mode, starting cash is $100K
-  - Map 1h signals to 1m timeframe for Crypto
-  - Do analysis for slippage by BPS, include sensitivity test by discretized sigmas
-  - Combine commission fee cost with slippage by BPS cost and extract dollar based equity
-  - Do Monte-Carlo Simulation and extract metrics like risk of ruin and DSR
-  - Calculate maximum drawdown from the simulations
-  - Use Position sizing based on maximum drawdown, generate dollar based equity again
-  - Compare RSI strategy with or without trading cost involved
+# Spread based trading cost analysis
+
+  FX brokers tend to charge through spreads
+  FX slippage estimation experiment
+    fx_rsi_slippage.py
+  FX spread estimation experiment
+    fx_spread.py
+  Slippage and spread involved backtesting
+    fx_macross_backtesting.py
+  Spread involved backtesting on lower granularity
+    fx_macross_backtesting_1m.py
+
 
 
 # Miscs
+
+
 
 
 # References

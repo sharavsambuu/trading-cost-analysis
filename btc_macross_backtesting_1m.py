@@ -1,10 +1,9 @@
 #%%
-# MA Cross Backtesting on 1H BTC with following trade costs and timeframes
-# - Slippage is 0.5BPS
-# - Taker fee is 0.04%
-# - Initial capital is 10000.0$
+# MA Cross Backtesting on 1H BTC on lower granularity
+# - Taker fee               is 0.04%
+# - Initial capital         is 10000.0$
 # - Position size per trade is 2% of account
-# - Timeframe is 1H
+# - Timeframe               is 1H
 # 
 
 #%%

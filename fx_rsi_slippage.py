@@ -23,14 +23,18 @@ import mplfinance        as mpf
 
 
 #%%
-df_ = pd.read_csv("./data/USDJPY.csv", parse_dates=True, index_col="datetime")
+df_ = pd.read_csv("./data/EURUSD.csv", parse_dates=True, index_col="datetime")
+
+
+#%%
+df_
 
 
 #%%
 
 
 #%%
-timeframe_by_hours  = 24
+timeframe_by_hours  = 4
 timeframe_by_minute = timeframe_by_hours*60
 
 

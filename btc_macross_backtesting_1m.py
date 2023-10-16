@@ -87,9 +87,42 @@ plt.show()
 
 
 #%%
-# Position tracking with slippage
+# Saving signals extracted on higher timeframe to lower granularity timeframe
 
-slippage_bps     = 0.5 / 10000 # 0.5BPS
+df_eval = df_.copy(deep=True)
+
+df_eval['Signal'] = 0
+
+for idx, row in df[df['Signal']== 1].iterrows():
+    if idx in df_eval.index:
+        df_eval.loc[idx, 'Signal'] = 1
+
+for idx, row in df[df['Signal']==-1].iterrows():
+    if idx in df_eval.index:
+        df_eval.loc[idx, 'Signal'] = -1
+
+look_ahead_shift = 1
+df_eval['Signal' ] = df_eval['Signal' ].shift(hours*60+look_ahead_shift)
+
+df_eval.dropna(inplace=True)
+
+
+#%%
+df_eval['Signal'].value_counts()
+
+
+#%%
+
+
+#%%
+
+
+#%%
+
+
+#%%
+# Position tracking
+
 position         = 0
 entry_timestamp  = None
 entry_price      = 0
@@ -97,21 +130,24 @@ exit_timestamp   = None
 exit_price       = 0
 position_history = []
 
-for index, row in df.iterrows():
+for index, row in df_eval.iterrows():
     if row['Signal'] != position:
         # Exit position
         if position != 0:
             exit_timestamp = index
-            exit_price     = row['Close'] * (1 - slippage_bps) if position == 1 else row['Close'] * (1 + slippage_bps)
+            exit_price     = row['Close']
             pct_change     = (exit_price - entry_price) / entry_price * 100
             position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
+
         # Enter new position
         if row['Signal'] == 1:
             entry_timestamp = index
-            entry_price     = row['Close'] * (1 + slippage_bps)
+            entry_price     = row['Close']
+
         elif row['Signal'] == -1:
             entry_timestamp = index
-            entry_price     = row['Close'] * (1 - slippage_bps)
+            entry_price     = row['Close']
+
         position = row['Signal']
 
 position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])

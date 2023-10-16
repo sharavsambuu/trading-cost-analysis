@@ -25,11 +25,24 @@ import matplotlib.pyplot as plt
 
 
 #%%
-df = yf.download('BTC-USD', interval='1h', period='23mo')
-df
+df_ = pd.read_csv("./data/EURUSD.csv", parse_dates=True, index_col="datetime")
+df_
 
 #%%
-df['Close'].plot()
+df_['Close'].plot()
+
+#%%
+
+
+#%%
+hours               = 1
+timeframe_by_minute = hours*60
+timeframe = f"{timeframe_by_minute}Min"
+
+df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
+df.dropna(inplace=True) # Dropping because of FX doesn't trade during weekends
+
+df
 
 #%%
 

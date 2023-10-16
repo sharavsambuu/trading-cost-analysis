@@ -1,10 +1,10 @@
 #%%
 # MA Cross Backtesting on 1H EURUSD with following trade costs and timeframes
-# - Slippage is 0.1BPS
-# - Spread is 15pips
-# - Initial capital is 10000.0$
+# - Slippage                is 0.1 bps
+# - Spread                  is 20  pips
+# - Initial capital         is 10000.0$
 # - Position size per trade is 2% of account
-# - Timeframe is 1H
+# - Timeframe               is 1H
 # 
 
 #%%
@@ -67,8 +67,8 @@ fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 ax1.plot(plot_df.index, plot_df['Close'], label='Close', color='black')
 ax1.plot(plot_df['MA200'], color='blue' )
 ax1.plot(plot_df['MA50' ], color='green')
-ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=8, color='green', label='Long' )
-ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=8, color='red'  , label='Short')
+ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=5, color='green', label='Long' )
+ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=5, color='red'  , label='Short')
 ax1.set_ylabel('Price')
 ax1.set_title('BTC-USD Signals')
 ax1.legend()
@@ -82,14 +82,20 @@ plt.show()
 
 
 #%%
-# Position tracking with slippage
+# Position tracking with slippage and spread costs
 
 slippage_bps        = 0.1 / 10000    # 0.1 bps
-spread_by_pips      = 15             # 15  pips for spread
+spread_by_pips      = 20             # 20  pips for spread
+
 spread_to_pip_ratio = 1.0            # in JPY based pairs, this ratio would be different
 spread_by_bps       = (spread_by_pips / 10000) * spread_to_pip_ratio
+
 trading_cost_bps    = slippage_bps + spread_by_bps
 
+print(f"Total trading cost including slippage and spread is {trading_cost_bps} basis points.")
+
+
+#%%
 position         = 0
 entry_timestamp  = None
 entry_price      = 0
@@ -147,6 +153,7 @@ position_df = position_df.set_index('Entry Time')
 
 position_df['Account Change'] = position_df['Account History'].pct_change()
 
+
 #%%
 position_df
 
@@ -154,7 +161,7 @@ position_df
 
 
 #%%
-qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC Performance', show=True);
+qs.plots.snapshot(position_df['Account Change'], title='MA Cross on EURUSD Performance', show=True);
 
 #%%
 qs.plots.drawdown(position_df['Account Change'])

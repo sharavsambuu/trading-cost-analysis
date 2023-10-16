@@ -8,11 +8,17 @@
 # Commission fee based trading cost analysis
 
   Mostly crypto markets like binance charge through commission fee which is certain percentage of total traded value.
+
   Experiment on how many BPS of slippage happened from signals generated on 1H
+
     crypto_rsi_slippage.py
+
   From the slippage experiment I estimated 0.5BPS is ideal for BTC 1H slippage and backtested with 0.04% commission
+
     btc_macross_backtesting.py
+
   Other backtesting method is to map signals from higher timeframe to timeframe with lower granularity like 1m timeframe
+
     btc_macross_backtesting_1m.py
 
 
@@ -20,18 +26,24 @@
 # Spread based trading cost analysis
 
   FX brokers tend to charge through spreads
+
   FX slippage estimation experiment
+
     fx_rsi_slippage.py
+
   FX spread estimation experiment
+
     fx_spread.py
+
   Slippage and spread involved backtesting
+
     fx_macross_backtesting.py
+
   Spread involved backtesting on lower granularity
+
     fx_macross_backtesting_1m.py
 
 
-
-# Miscs
 
 
 

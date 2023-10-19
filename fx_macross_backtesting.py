@@ -84,47 +84,57 @@ plt.show()
 #%%
 # Position tracking with slippage and spread costs
 
-slippage_bps        = 0.1 / 10000    # 0.1 bps
-spread_by_pips      = 20             # 20  pips for spread
-
-spread_to_pip_ratio = 1.0            # in JPY based pairs, this ratio would be different
-spread_by_bps       = (spread_by_pips / 10000) * spread_to_pip_ratio
-
-trading_cost_bps    = slippage_bps + spread_by_bps
-
-print(f"Total trading cost including slippage and spread is {trading_cost_bps} basis points.")
+slippage_by_bps = 0.05                    # bps
+slippage_by_pct = slippage_by_bps / 10000 # bps by percentage
+spread_by_pips  = 15                      # pips for spread
+eurusd_pip_move = 0.0001
 
 
 #%%
+# Position tracking with exit and reverse mode
 position         = 0
 entry_timestamp  = None
 entry_price      = 0
 exit_timestamp   = None
 exit_price       = 0
+is_available     = True
 position_history = []
 
-for index, row in df.iterrows():
-    if row['Signal'] != position:
-        # Exit position
-        if position != 0:
-            exit_timestamp = index
-            exit_price     = row['Close'] * (1 - trading_cost_bps) if position == 1 else row['Close'] * (1 + trading_cost_bps)
-            pct_change     = (exit_price - entry_price) / entry_price * 100
-            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
-        # Enter new position
-        if row['Signal'] == 1:
-            entry_timestamp = index
-            entry_price     = row['Close'] * (1 + trading_cost_bps)
-        elif row['Signal'] == -1:
-            entry_timestamp = index
-            entry_price     = row['Close'] * (1 - trading_cost_bps)
-        position = row['Signal']
+for index, row in df[(df['Signal']!=0)].iterrows():
+    # Exit position
+    if position != 0 and is_available==False:
+        exit_timestamp = index
+        exit_price     = row['Close'] 
+        pct_change     = ((exit_price - entry_price) / entry_price * 100 ) * position
+        position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change, position))
+        is_available   = True
 
-position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
+    # Enter new position
+    if row['Signal'] == 1 and is_available==True:
+        entry_timestamp     = index
+
+        spread_cost_move    = spread_by_pips  * eurusd_pip_move
+        entry_price         = row['Close'] * (1 + slippage_by_pct) + spread_cost_move
+
+        is_available        = False
+        position            = 1
+
+    if row['Signal'] == -1 and is_available==True:
+        entry_timestamp     = index
+
+        spread_cost_move    = spread_by_pips  * eurusd_pip_move
+        entry_price         = row['Close'] * (1 - slippage_by_pct) - spread_cost_move
+
+        is_available        = False
+        position            = -1
+
+
+position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change', 'Position'])
 position_df['cumret'] = position_df['Pct Change'].cumsum()
 
 
 #%%
+position_df['cumret'].plot()
 
 
 #%%

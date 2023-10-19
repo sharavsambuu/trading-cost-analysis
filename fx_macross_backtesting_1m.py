@@ -111,53 +111,48 @@ df_eval['Signal'].value_counts()
 
 
 #%%
-spread_to_pip_ratio = 1.0 # in JPY based pairs, this ratio would be different
+eurusd_pip_move     = 0.0001
+
 position            = 0
 entry_timestamp     = None
 entry_price         = 0
 exit_timestamp      = None
 exit_price          = 0
+is_available        = True
 position_history    = []
 
-for index, row in df_eval.iterrows():
-    if row['Signal'] != position:
-        # Exit position
-        if position != 0:
-            spread_by_pips   = row['Spread']
-            spread_by_bps    = (spread_by_pips/10000)*spread_to_pip_ratio
-            trading_cost_bps = spread_by_bps
+for index, row in df_eval[(df_eval['Signal']!=0)].iterrows():
+    # Exit position
+    if position != 0 and is_available==False:
+        exit_timestamp   = index
+        exit_price       = row['Close'] 
+        pct_change       = ((exit_price - entry_price) / entry_price * 100) * position
+        is_available     = True
+        position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change, position))
 
-            exit_timestamp   = index
-            exit_price       = row['Close'] * (1 - trading_cost_bps) if position == 1 else row['Close'] * (1 + trading_cost_bps)
-            pct_change       = (exit_price - entry_price) / entry_price * 100
-            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
+    # Open new long position
+    if row['Signal'] == 1 and is_available==True:
+        spread_by_pips   = row['Spread']
+        spread_cost_move = spread_by_pips  * eurusd_pip_move
+        entry_price      = row['Close'] + spread_cost_move
 
-            #print(f"Exit => cost={trading_cost_bps}, price={row['Close']}, exit_price={exit_price}")
+        entry_timestamp  = index
+        is_available     = False
+        position         = 1
 
-        # Enter new position
-        if row['Signal'] == 1:
-            spread_by_pips   = row['Spread']
-            spread_by_bps    = (spread_by_pips/10000)*spread_to_pip_ratio
-            trading_cost_bps = spread_by_bps
+    # Open new short position
+    if row['Signal'] == -1 and is_available==True:
+        spread_by_pips   = row['Spread']
+        spread_cost_move = spread_by_pips  * eurusd_pip_move
+        entry_price      = row['Close'] - spread_cost_move
 
-            entry_timestamp  = index
-            entry_price      = row['Close'] * (1 + trading_cost_bps)
+        entry_timestamp  = index
+        is_available     = False
+        position         = -1
 
-            #print(f"Long => cost={trading_cost_bps}, price={row['Close']}, entry_price={entry_price}")
 
-        elif row['Signal'] == -1:
-            spread_by_pips   = row['Spread']
-            spread_by_bps    = (spread_by_pips/10000)*spread_to_pip_ratio
-            trading_cost_bps = spread_by_bps
 
-            entry_timestamp  = index
-            entry_price      = row['Close'] * (1 - trading_cost_bps)
-
-            #print(f"Short => cost={trading_cost_bps}, price={row['Close']}, entry_price={entry_price}")
-
-        position = row['Signal']
-
-position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
+position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change', 'Position'])
 position_df['cumret'] = position_df['Pct Change'].cumsum()
 
 
@@ -182,10 +177,9 @@ for index, trade in position_df.iterrows():
     account_balance += balance_change
     balance_changes.append(balance_change)
 
-position_df['Balance Change'] = balance_changes
+position_df['Balance Change' ] = balance_changes
 position_df['Account History'] = initial_capital + position_df['Balance Change'].cumsum()
-
-position_df['Entry Time'] = pd.to_datetime(position_df['Entry Time'])
+position_df['Entry Time'     ] = pd.to_datetime(position_df['Entry Time'])
 position_df = position_df.set_index('Entry Time')
 
 position_df['Account Change'] = position_df['Account History'].pct_change()

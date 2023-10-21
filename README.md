@@ -50,36 +50,61 @@
 
 # References
 
+  - Are you using the right backtest spread?
+
+    https://www.youtube.com/watch?v=I0W-DAskwvY
+
+
   - Position sizing for practitioners 
+
     https://quantfiction.com/2018/12/20/position-sizing-for-practitioners-part-3-a-portfolio-approach/
 
+
   - Some frame of reference for 4H timeframe
+
     https://twitter.com/pedma7/status/1691419485117599747
     https://twitter.com/ThePythonQuant/status/1691552227943416157
 
+
   - Modeling Transaction Costs for Algorithmic Strategies
+
     https://www.youtube.com/watch?v=2w48B3U87a8
 
+
   - What are transaction costs and how do they impact your algorithm’s performance
+
     https://www.youtube.com/watch?v=LAUKOjZvvQQ
 
+
   - Calculating Market Impact
+  
     https://quantopian-archive.netlify.app/forum/threads/calculating-market-impact.html
 
+
   - Market Impact Model Notebook
+
     https://notebook.community/quantopian/research_public/notebooks/lectures/Market_Impact_Model/notebook
 
+
   - Modelling Transaction Costs and Market Impact
+
     https://bsic.it/modelling-transaction-costs-and-market-impact/
 
+
   - Market Impact: Empirical Evidence, Theory and Practice Emilio Said
+
     https://hal.science/hal-03668669v1/file/Market_Impact_Empirical_Evidence_Theory_and_Practice.pdf
 
+
   - Quants turn to machine learning to model market impact
+
     https://www.risk.net/asset-management/4644191/quants-turn-to-machine-learning-to-model-market-impact
 
+
   - Retaining Alpha: The Effect of Trade Size and Rebalancing Frequency on FX Strategy Returns
+
     https://www.econstor.eu/bitstream/10419/216539/1/cesifo1_wp8143.pdf
+
 
     
 

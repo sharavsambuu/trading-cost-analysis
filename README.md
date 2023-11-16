@@ -50,6 +50,11 @@
 
 # References
 
+  - Spread Fees and Backtesting - Algo Trading Q&A | Ep 1
+
+    https://www.youtube.com/watch?v=K5IghR15sRk
+
+    
   - Are you using the right backtest spread?
 
     https://www.youtube.com/watch?v=I0W-DAskwvY

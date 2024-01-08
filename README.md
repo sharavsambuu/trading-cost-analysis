@@ -5,6 +5,19 @@
 
 
 
+# Todo
+
+  - Try to apply cost model on higher timeframe as specified on following 
+    https://github.com/MicroBioScopicData/Cryptos_Analysis
+
+  - Try to estimate spread_slippage levels for different timeframes
+
+  - Compare it to result backtested on 1m mapped
+
+  - Try out different spread_slippage numbers
+
+
+
 # Commission fee based trading cost analysis
 
   Mostly crypto markets like binance charge through commission fee which is certain percentage of total traded value.

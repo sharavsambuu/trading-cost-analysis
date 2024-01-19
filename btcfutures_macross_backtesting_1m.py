@@ -1,6 +1,6 @@
 #%%
-# MA Cross Backtesting on 1H BTC on lower granularity
-# - Taker fee               is 0.04%
+# MA Cross Backtesting on 1H BTC futures on lower granularity
+# - Taker fee               is 0.05%
 # - Initial capital         is 10000.0$
 # - Position size per trade is 2% of account
 # - Timeframe               is 1H
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 
 #%%
-df_ = pd.read_csv("./data/BTCUSDT.csv", parse_dates=True, index_col=0)
+df_ = pd.read_csv("./data/crypto-futures/BTCUSDT.csv", parse_dates=True, index_col=0)
 df_.index = pd.to_datetime(df_.index, format='mixed')
 df_.index = pd.DatetimeIndex(df_.index)
 df_
@@ -65,15 +65,15 @@ df['Signal'].value_counts()
 
 
 #%%
-plot_df = df["2021-01-01":]
+plot_df = df["2021-01-01":"2021-01-20"]
 
 fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 
 ax1.plot(plot_df.index, plot_df['Close'], label='Close', color='black')
 ax1.plot(plot_df['MA200'], color='blue' )
 ax1.plot(plot_df['MA50' ], color='green')
-ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=8, color='green', label='Long' )
-ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=8, color='red'  , label='Short')
+ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=18, color='green', label='Long' )
+ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=18, color='red'  , label='Short')
 ax1.set_ylabel('Price')
 ax1.set_title('BTC-USD Signals')
 ax1.legend()
@@ -159,7 +159,7 @@ position_df['cumret'] = position_df['Pct Change'].cumsum()
 
 #%%
 initial_capital    = 10000.0 # Initial capital in dollars
-commission_fee     = 0.04    # 0.04% commission fee per trade
+commission_fee     = 0.05    # 0.05% commission fee per trade
 position_per_trade = 0.02    # 2% of position size per trade
 
 account_balance = initial_capital
@@ -183,6 +183,7 @@ position_df = position_df.set_index('Entry Time')
 
 position_df['Account Change'] = position_df['Account History'].pct_change()
 
+
 #%%
 position_df
 
@@ -190,7 +191,7 @@ position_df
 
 
 #%%
-qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC Performance', show=True);
+qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC spot Performance', show=True);
 
 #%%
 qs.plots.drawdown(position_df['Account Change'])

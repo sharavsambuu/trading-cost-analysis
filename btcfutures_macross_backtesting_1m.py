@@ -39,9 +39,8 @@ df_['Close'].plot()
 hours               = 1
 timeframe_by_minute = hours*60
 timeframe = f"{timeframe_by_minute}Min"
-
 df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
-df.dropna(inplace=True) # Dropping because of FX doesn't trade during weekends
+df.dropna(inplace=True) 
 
 df
 
@@ -191,7 +190,7 @@ position_df
 
 
 #%%
-qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC spot Performance', show=True);
+qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC futures Performance', show=True);
 
 #%%
 qs.plots.drawdown(position_df['Account Change'])

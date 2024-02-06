@@ -43,7 +43,7 @@ timeframe_by_minute = hours*60
 timeframe = f"{timeframe_by_minute}Min"
 
 df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
-df['Price'] = df['Close'].shift(-1)
+df['Price'] = df['Open'].shift(-1)
 df.dropna(inplace=True)
 
 df
@@ -75,8 +75,8 @@ fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 ax1.plot(plot_df.index, plot_df['Close'], label='Close', color='black')
 ax1.plot(plot_df['MA200'], color='blue' )
 ax1.plot(plot_df['MA50' ], color='green')
-ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=8, color='green', label='Long' )
-ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=8, color='red'  , label='Short')
+ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Price'], '^', markersize=8, color='green', label='Long' )
+ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Price'], 'v', markersize=8, color='red'  , label='Short')
 ax1.set_ylabel('Price')
 ax1.set_title('BTC-USD Signals')
 ax1.legend()

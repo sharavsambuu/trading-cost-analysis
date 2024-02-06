@@ -1,7 +1,7 @@
 #%%
 # MA Cross Backtesting on 1H BTC with following trade costs and timeframes
 # - Slippage is 0.5BPS
-# - Taker fee is 0.04%
+# - Taker fee is 0.05%
 # - Initial capital is 10000.0$
 # - Position size per trade is 2% of account
 # - Timeframe is 1H
@@ -25,9 +25,10 @@ import matplotlib.pyplot as plt
 
 
 #%%
-df_ = pd.read_csv("./data/BTCUSDT.csv", parse_dates=True, index_col=0)
+df_ = pd.read_csv("./data/crypto-spot/BTCUSDT.csv", parse_dates=True, index_col=0)
 df_.index = pd.to_datetime(df_.index, format='mixed')
 df_.index = pd.DatetimeIndex(df_.index)
+
 df_
 
 #%%
@@ -42,7 +43,8 @@ timeframe_by_minute = hours*60
 timeframe = f"{timeframe_by_minute}Min"
 
 df = df_.resample(timeframe).agg({'Open':'first', 'High':'max', 'Low':'min', 'Close':'last', 'Volume': 'sum'})
-df.dropna(inplace=True) # Dropping because of FX doesn't trade during weekends
+df['Price'] = df['Close'].shift(-1)
+df.dropna(inplace=True)
 
 df
 
@@ -66,7 +68,7 @@ df['Signal'].value_counts()
 
 
 #%%
-plot_df = df["2021-01-01":]
+plot_df = df["2021-01-01":"2021-03-01"]
 
 fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 
@@ -103,16 +105,16 @@ for index, row in df.iterrows():
         # Exit position
         if position != 0:
             exit_timestamp = index
-            exit_price     = row['Close'] * (1 - slippage_bps) if position == 1 else row['Close'] * (1 + slippage_bps)
+            exit_price     = row['Price'] * (1 - slippage_bps) if position == 1 else row['Price'] * (1 + slippage_bps)
             pct_change     = (exit_price - entry_price) / entry_price * 100
             position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
         # Enter new position
         if row['Signal'] == 1:
             entry_timestamp = index
-            entry_price     = row['Close'] * (1 + slippage_bps)
+            entry_price     = row['Price'] * (1 + slippage_bps)
         elif row['Signal'] == -1:
             entry_timestamp = index
-            entry_price     = row['Close'] * (1 - slippage_bps)
+            entry_price     = row['Price'] * (1 - slippage_bps)
         position = row['Signal']
 
 position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
@@ -124,7 +126,7 @@ position_df['cumret'] = position_df['Pct Change'].cumsum()
 
 #%%
 initial_capital    = 10000.0 # Initial capital in dollars
-commission_fee     = 0.04    # 0.04% commission fee per trade
+commission_fee     = 0.05    # 0.05% commission fee per trade
 position_per_trade = 0.02    # 2% of position size per trade
 
 account_balance = initial_capital

@@ -30,7 +30,7 @@ outliers_percentage = outliers_percentage/100.0 # percentage of all returns are 
 outliers_count      = int(num_periods*outliers_percentage)
 
 for idx in range(0, num_securities):
-    percentage_changes = np.random.uniform(-0.05, 0.05, num_periods).astype(float)
+    percentage_changes = np.random.uniform(-0.045, 0.055, num_periods).astype(float)
     extreme_returns    = np.random.uniform(-0.09,  0.1, outliers_count).astype(float)
     outliers_date      = df['datetime_'].sample(n=outliers_count).to_list()
     df[f"pct_change_{idx}"] = percentage_changes

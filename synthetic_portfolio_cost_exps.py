@@ -74,6 +74,60 @@ df.filter(like='cum_ret_').plot(legend=False)
 
 #%%
 
+rebalancing_cost   = 0.001 # 0.1% aka 10bps as rebalancing cost
+volatility_window  = 45
+
+returns            = df.filter(like='return_')
+log_returns        = (1+returns).apply(np.log)
+rolling_volatility = log_returns.rolling(window=volatility_window).std()
+rolling_volatility = rolling_volatility.ewm(span=5, adjust=False, min_periods=5).mean() # Fast EMA5 smoothing for volatility
+
+weekly_log_returns = log_returns.resample('W').sum()
+
+weights            = np.ones(num_securities)/num_securities # weights shape is (num_securities,0)
+portfolio_returns  = pd.DataFrame(index=weekly_log_returns.index, columns=['Portfolio'])
+
+
+#%%
+rolling_volatility.plot(legend=False)
+plt.title(f'{volatility_window} days volatility');
+
+#%%
+weekly_log_returns.plot(legend=False)
+
+#%%
+
+
+#%%
+for i, week in enumerate(weekly_log_returns.index):
+    if i==0:
+        # initial rebalancing, no cost
+        weekly_log_returns_this_week = weekly_log_returns.iloc[i]
+        portfolio_returns_this_week  = np.dot(weekly_log_returns_this_week, weights)
+        portfolio_returns.loc[week, 'Portfolio'] = portfolio_returns_this_week
+        pass
+    else:
+        prev_portfolio_value = portfolio_returns.iloc[i-1]['Portfolio']
+
+        #print(weekly_log_returns.iloc[i-1])
+        # volatility targeting
+        inverse_volatility = 1 / weekly_log_returns.iloc[i-1].std()
+        #print(inverse_volatility)
+        new_weights        = weights * inverse_volatility
+        new_weights       /= new_weights.sum()
+
+        #print(new_weights)
+        # calculate transaction cost in log space
+        log_transaction_cost = np.abs(np.log(new_weights) - np.log(weights)).sum() * rebalancing_cost
+        #print(log_transaction_cost)
+
+
+        weights = new_weights
+        #print(weights)
+        #print('-----------')
+
+        pass
+    pass
 
 #%%
 

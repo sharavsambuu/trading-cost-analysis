@@ -54,12 +54,21 @@ for idx in range(0, num_securities):
 
 
 #%%
-
+# Some notes on log returns
+# Using log returns we can harness benefits of compounding effects and 
+# easiliy incorporota transaction cost in this case it is rebalancing cost
 
 #%%
 
 
 #%%
+# Baseline portfolio allocation with the volatility targeting
+#
+# - Initial allocation is equally weighted
+# - Adjust weights based on the volatility of security
+# - Rebalancing will be done in weekly basis
+#
+#
 
 
 #%%

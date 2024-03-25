@@ -33,8 +33,8 @@ outliers_percentage = outliers_percentage/100.0 # percentage of all returns are 
 outliers_count      = int(num_periods*outliers_percentage)
 
 for idx in range(0, num_securities):
-    percentage_changes = np.random.uniform(-0.033, 0.033, num_periods).astype(float)
-    extreme_returns    = np.random.uniform(-0.08 , 0.09 , outliers_count).astype(float)
+    percentage_changes = np.random.uniform(-0.03, 0.031, num_periods).astype(float)
+    extreme_returns    = np.random.uniform(-0.06 , 0.08 , outliers_count).astype(float)
     outliers_date      = df['datetime_'].sample(n=outliers_count).to_list()
     df[f"return_{idx}"] = percentage_changes
     for outlier in list(zip(outliers_date, extreme_returns)):
@@ -59,7 +59,10 @@ df
 
 
 #%%
-initial_cash     = 100000 # 100K USD
+initial_cash = 100000 # 100K USD
+
+
+#%%
 
 
 #%%
@@ -127,6 +130,10 @@ rebalanced_df
 #%%
 df['raw_portfolio_cumret'].plot()
 plt.legend(['No rebalance'])
+
+
+#%%
+
 
 #%%
 rebalanced_df[['cum_ret', 'adjusted_cum_ret']].plot()

@@ -1,8 +1,11 @@
 #%%
+import warnings
 import pandas            as pd
 import numpy             as np
 import matplotlib.pyplot as plt
 from   datetime          import timedelta
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 #%%
 
@@ -13,7 +16,7 @@ from   datetime          import timedelta
 #%%
 # Preparing data for portfolio
 
-num_securities = 40
+num_securities = 20
 num_periods    = 200
 start_date     = pd.to_datetime('2020-01-01')
 end_date       = pd.to_datetime('2024-12-31')
@@ -30,18 +33,17 @@ outliers_percentage = outliers_percentage/100.0 # percentage of all returns are 
 outliers_count      = int(num_periods*outliers_percentage)
 
 for idx in range(0, num_securities):
-    percentage_changes = np.random.uniform(-0.033, 0.036, num_periods).astype(float)
-    extreme_returns    = np.random.uniform(-0.08,  0.12, outliers_count).astype(float)
+    percentage_changes = np.random.uniform(-0.033, 0.033, num_periods).astype(float)
+    extreme_returns    = np.random.uniform(-0.08 , 0.09 , outliers_count).astype(float)
     outliers_date      = df['datetime_'].sample(n=outliers_count).to_list()
     df[f"return_{idx}"] = percentage_changes
     for outlier in list(zip(outliers_date, extreme_returns)):
         outlier_dt  = outlier[0]
         outlier_ret = outlier[1]
         df.loc[outlier_dt, f"return_{idx}"] = outlier_ret
-    df[f"cum_ret_{idx}"  ] = df[f"return_{idx}"].cumsum()
+    df[f"cum_ret_{idx}"] = df[f"return_{idx}"].cumsum()
 
 df.drop('datetime_', axis=1, inplace=True)
-
 
 df.filter(like='cum_ret_').plot(legend=False)
 
@@ -51,19 +53,26 @@ df
 
 
 #%%
-# Some notes
-#
-# Using log returns we can harness benefits of compounding effects and 
-# easiliy incorporota transaction cost in this case it is rebalancing cost
-#
-#
-# Baseline portfolio allocation with the volatility targeting
-#
-# - Initial allocation is equally weighted
-# - Adjust weights based on the volatility of security
-# - Rebalancing will be done in weekly basis
-#
-#
+
+
+#%%
+
+
+#%%
+initial_cash     = 100000 # 100K USD
+
+
+#%%
+# no rebalancing portfolio
+
+allocated_cash = initial_cash/num_securities
+
+for idx in range(0, num_securities):
+    df[f"cash_path_{idx}"] = (1+df[f"return_{idx}"]).cumprod()*(allocated_cash)
+
+df['raw_portfolio_cash_path'] = df[[col_name for col_name in df.columns if col_name.startswith("cash")]].sum(axis=1)
+df['raw_portfolio_return'   ] = df['raw_portfolio_cash_path'].pct_change()
+df['raw_portfolio_cumret'   ] = df['raw_portfolio_return'].cumsum()
 
 
 #%%
@@ -71,90 +80,57 @@ df
 
 #%%
 
-rebalancing_cost   = 0.001 # 0.1% aka 10bps as rebalancing cost
-volatility_window  = 60
 
-returns            = df.filter(like='return_')
-log_returns        = (1+returns).apply(np.log)
-rolling_volatility = log_returns.rolling(window=volatility_window).std()
-rolling_volatility = rolling_volatility.ewm(span=5, adjust=False, min_periods=5).mean() # Fast EMA5 smoothing for volatility
+#%%
+# weekly equally weighted rebalancing portfolio
+
+rebalancing_cost = 0.001  # 0.1% aka 10bps as rebalancing cost
+rebalancing_freq = 'W'    # Weekly rebalancing
+
+rebalanced_dates            = []
+rebalanced_portfolio_values = []
+
+current_portfolio_value     = initial_cash
+for date, group in df.groupby(pd.Grouper(freq=rebalancing_freq)):
+    group_df = group.copy()
+    allocated_cash = current_portfolio_value/num_securities
+    for idx in range(0, num_securities):
+        group_df[f"rebalanced_cash_path_{idx}"] = (1+group_df[f"return_{idx}"]).cumprod()*(allocated_cash)
+    if not group_df.empty:
+        rebalanced_cash_cols = [col_name for col_name in group_df.columns if col_name.startswith("rebalanced_cash_path")]
+        current_portfolio_value = group_df.iloc[-1][rebalanced_cash_cols].sum()
+        rebalanced_dates.append(date)
+        rebalanced_portfolio_values.append(current_portfolio_value)
+
+rebalanced_df       = pd.DataFrame(index=rebalanced_dates)
+rebalanced_df.index = pd.to_datetime(rebalanced_df.index)
+rebalanced_df['value' ] = rebalanced_portfolio_values
+rebalanced_df['return'] = rebalanced_df['value'].pct_change()
+rebalanced_df.dropna(inplace=True)
 
 
-weekly_log_returns = log_returns.resample('W').sum()
-weekly_volatility  = rolling_volatility.resample('W').last()
+rebalancing_cost_log = np.log(1-rebalancing_cost)
+rebalanced_df['log_return'         ] = (1+rebalanced_df['return']).apply(np.log)
+rebalanced_df['adjusted_log_return'] = rebalanced_df['log_return'] + rebalancing_cost_log
 
-cutoff_date        = "2022-04-01"
-weekly_log_returns = weekly_log_returns[cutoff_date:]
-weekly_volatility  = weekly_volatility [cutoff_date:]
+rebalanced_df['cum_ret'         ] = rebalanced_df['log_return'         ].cumsum().apply(np.exp)
+rebalanced_df['adjusted_cum_ret'] = rebalanced_df['adjusted_log_return'].cumsum().apply(np.exp)
 
-weights            = np.ones(num_securities)/num_securities # weights shape is (num_securities,0)
-portfolio_returns  = pd.DataFrame(index=weekly_log_returns.index, columns=['Portfolio'])
+
+#%%
+rebalanced_df
 
 
 #%%
 
 
 #%%
-weekly_log_returns
-
-
-#%%
-weekly_volatility
-
+df['raw_portfolio_cumret'].plot()
+plt.legend(['No rebalance'])
 
 #%%
-weekly_log_returns.values.shape, weekly_volatility.values.shape
-
-
-#%%
-rolling_volatility.plot(legend=False)
-plt.title(f'{volatility_window} days volatility');
-
-
-#%%
-weekly_log_returns.plot(legend=False)
-
-
-#%%
-
-
-#%%
-for i, week in enumerate(weekly_log_returns.index):
-    if i==0:
-        # initial rebalancing, no cost
-        weekly_log_returns_this_week = weekly_log_returns.iloc[i]
-        portfolio_returns_this_week  = np.dot(weekly_log_returns_this_week, weights)
-        portfolio_returns.loc[week, 'Portfolio'] = portfolio_returns_this_week
-        #print(weights)
-        pass
-    else:
-        prev_portfolio_value = portfolio_returns.iloc[i-1]['Portfolio']
-
-
-        # volatility targeting
-        inverse_volatility = np.array(1.0 / weekly_volatility.iloc[i-1].values)
-        new_weights        = np.multiply(weights, inverse_volatility)
-        new_weights       /= new_weights.sum()
-
-        print(new_weights)
-
-        # calculate transaction cost in log space
-        #log_transaction_cost = np.abs(np.log(new_weights) - np.log(weights)).sum() * rebalancing_cost
-        #print(log_transaction_cost)
-
-
-        weights = new_weights
-        #print(weights)
-        #print('-----------')
-
-        pass
-    pass
-
-#%%
-weights
-
-
-#%%
+rebalanced_df[['cum_ret', 'adjusted_cum_ret']].plot()
+plt.legend(['Rebalanced portfolio', f"Rebalancing cost {round(rebalancing_cost*100,2)}%"])
 
 
 #%%

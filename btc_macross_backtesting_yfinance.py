@@ -36,6 +36,7 @@ df['Price'] = df['Open'].shift(-1)
 df
 
 #%%
+df.dropna(inplace=True)
 
 
 #%%
@@ -47,6 +48,7 @@ df['MA200'] = df['Close'].rolling(window=50).mean()
 df['Signal'] = 0
 df.loc[((df['MA50'] > df['MA200']) & (df['MA50'].shift(1) <= df['MA200'].shift(1))), 'Signal'] =  1
 df.loc[((df['MA50'] < df['MA200']) & (df['MA50'].shift(1) >= df['MA200'].shift(1))), 'Signal'] = -1
+
 
 #%%
 df['Signal'].value_counts()
@@ -76,9 +78,10 @@ plt.show()
 
 
 #%%
-# Position tracking with slippage
 
-slippage_bps     = 0.5 / 10000 # 0.5BPS
+
+#%%
+# Position tracking
 position         = 0
 entry_timestamp  = None
 entry_price      = 0
@@ -91,59 +94,60 @@ for index, row in df.iterrows():
         # Exit position
         if position != 0:
             exit_timestamp = index
-            exit_price     = row['Price'] * (1 - slippage_bps) if position == 1 else row['Price'] * (1 + slippage_bps)
-            pct_change     = (exit_price - entry_price) / entry_price * 100
+            exit_price     = row['Price'] 
+            pct_change     = (exit_price - entry_price) / entry_price
             position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
         # Enter new position
         if row['Signal'] == 1:
             entry_timestamp = index
-            entry_price     = row['Price'] * (1 + slippage_bps)
+            entry_price     = row['Price']
         elif row['Signal'] == -1:
             entry_timestamp = index
-            entry_price     = row['Price'] * (1 - slippage_bps)
+            entry_price     = row['Price']
         position = row['Signal']
 
-position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
-position_df['cumret'] = position_df['Pct Change'].cumsum()
+position_df = pd.DataFrame(position_history, columns=['EntryTime', 'ExitTime', 'EntryPrice', 'ExitPrice', 'Return'])
+position_df = position_df.set_index(pd.DatetimeIndex(position_df['EntryTime']))
 
-#%%
-
-
-#%%
-initial_capital    = 10000.0 # Initial capital in dollars
-commission_fee     = 0.05    # 0.05% commission fee per trade
-position_per_trade = 0.02    # 2% of position size per trade
-
-account_balance = initial_capital
-balance_changes = []
-
-# Iterate through each trade in the position history
-for index, trade in position_df.iterrows():
-    pct_change       = trade['Pct Change']
-    position_size    = account_balance * position_per_trade
-    dollar_change    = position_size * pct_change
-    commission       = position_size * (commission_fee/100.0)
-    balance_change   = dollar_change - commission
-    account_balance += balance_change
-    balance_changes.append(balance_change)
-
-position_df['Balance Change'] = balance_changes
-position_df['Account History'] = initial_capital + position_df['Balance Change'].cumsum()
-
-position_df['Entry Time'] = pd.to_datetime(position_df['Entry Time'])
-position_df = position_df.set_index('Entry Time')
-
-position_df['Account Change'] = position_df['Account History'].pct_change()
-
-
-#%%
 position_df
 
+
+#%%
+# Naive cumulative sum
+position_df['Return'].cumsum().plot()
+
+
 #%%
 
 
 #%%
-qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC YFinance Performance', show=True);
+# Cost adjustments
+
+position_df['LogReturn'] = (1+position_df['Return']).apply(np.log)
+
+slippage_pct  = 0.005 # 0.5BPS 
+taker_fee_pct = 0.05  # Binance taker fee is 0.05%
+transaction_cost_log = np.log(1-slippage_pct/100.0) + np.log(1-taker_fee_pct/100.0)
+position_df['AdjustedLogReturn'] = position_df['LogReturn']  + transaction_cost_log
+
+position_df['CumRet'            ] = 1+position_df['Return'].cumsum()
+position_df['CostAdjustedCumRet'] = position_df['AdjustedLogReturn'].cumsum().apply(np.exp)
+
+#%%
+
+
+#%%
+position_df[['CumRet', 'CostAdjustedCumRet']].plot()
+plt.legend(['Raw strategy performance', 'Slippage and Fees applied performance'])
+
+#%%
+
+
+#%%
+position_df['Account Change'] = position_df['CostAdjustedCumRet'].pct_change()
+
+#%%
+qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC YFinance after the cost', show=True);
 
 #%%
 qs.plots.drawdown(position_df['Account Change'])
@@ -161,7 +165,7 @@ qs.plots.monthly_heatmap(position_df['Account Change'])
 qs.stats.sharpe(position_df['Account Change'])
 
 #%%
-position_df["Account History"].plot()
+
 
 #%%
 

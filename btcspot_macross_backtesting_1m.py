@@ -2,7 +2,6 @@
 # MA Cross Backtesting on 1H BTC on lower granularity
 # - Taker fee               is 0.05%
 # - Initial capital         is 10000.0$
-# - Position size per trade is 2% of account
 # - Timeframe               is 1H
 # 
 
@@ -29,8 +28,6 @@ df_.index = pd.to_datetime(df_.index, format='mixed')
 df_.index = pd.DatetimeIndex(df_.index)
 df_
 
-#%%
-df_['Close'].plot()
 
 #%%
 
@@ -136,7 +133,7 @@ for index, row in df_eval.iterrows():
         if position != 0:
             exit_timestamp = index
             exit_price     = row['Close']
-            pct_change     = (exit_price - entry_price) / entry_price * 100
+            pct_change     = (exit_price - entry_price) / entry_price
             position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
 
         # Enter new position
@@ -151,68 +148,49 @@ for index, row in df_eval.iterrows():
         position = row['Signal']
 
 position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
-position_df['cumret'] = position_df['Pct Change'].cumsum()
 
-
-#%%
-
-
-#%%
-initial_capital    = 10000.0 # Initial capital in dollars
-commission_fee     = 0.05    # 0.05% commission fee per trade
-position_per_trade = 0.02    # 2% of position size per trade
-
-account_balance = initial_capital
-balance_changes = []
-
-# Iterate through each trade in the position history
-for index, trade in position_df.iterrows():
-    pct_change       = trade['Pct Change']
-    position_size    = account_balance * position_per_trade
-    dollar_change    = position_size * pct_change
-    commission       = position_size * (commission_fee/100.0)
-    balance_change   = dollar_change - commission
-    account_balance += balance_change
-    balance_changes.append(balance_change)
-
-position_df['Balance Change'] = balance_changes
-position_df['Account History'] = initial_capital + position_df['Balance Change'].cumsum()
-
-position_df['Entry Time'] = pd.to_datetime(position_df['Entry Time'])
-position_df = position_df.set_index('Entry Time')
-
-position_df['Account Change'] = position_df['Account History'].pct_change()
-
-
-#%%
 position_df
 
 #%%
 
 
 #%%
-qs.plots.snapshot(position_df['Account Change'], title='MA Cross on BTC spot Performance', show=True);
+# Naive strategy performance
+position_df['Pct Change'].cumsum().plot()
 
-#%%
-qs.plots.drawdown(position_df['Account Change'])
-
-# %%
-qs.plots.drawdowns_periods(position_df['Account Change'])
-
-# %%
-qs.plots.histogram(position_df['Account Change'])
-
-# %%
-qs.plots.monthly_heatmap(position_df['Account Change'])
-
-# %%
-qs.stats.sharpe(position_df['Account Change'])
 
 #%%
 
 
 #%%
-position_df["Account History"].plot()
+# Cost adjustment
+position_df['LogReturn'] = (1+position_df['Pct Change']).apply(np.log)
+
+taker_fee_pct        = 0.05  # Binance taker fee is 0.05%
+transaction_cost_log = np.log(1-taker_fee_pct/100.0)
+position_df['AdjustedLogReturn'] = position_df['LogReturn'] + transaction_cost_log
+
+position_df['CumRet'            ] = 1+position_df['Pct Change'].cumsum()
+position_df['CostAdjustedCumRet'] = position_df['AdjustedLogReturn'].cumsum().apply(np.exp)
+
+
+#%%
+position_df[['CumRet', 'CostAdjustedCumRet']].plot()
+plt.legend(['Raw strategy performance', 'Transaction cost applied performance'])
+
+
+#%%
+position_df['CostAdjustedCumRet'].plot()
+
+
+#%%
+position_df
+
+
+#%%
+
+
+#%%
 
 
 # %%

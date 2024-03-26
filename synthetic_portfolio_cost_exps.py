@@ -87,8 +87,8 @@ df['raw_portfolio_cumret'   ] = df['raw_portfolio_return'].cumsum()
 #%%
 # weekly equally weighted rebalancing portfolio
 
-rebalancing_cost = 0.001  # 0.1% aka 10bps as rebalancing cost
-rebalancing_freq = 'W'    # Weekly rebalancing
+rebalancing_cost = 0.1/100.0  # 0.1% aka 10bps as rebalancing cost
+rebalancing_freq = 'W'        # Weekly rebalancing
 
 rebalanced_dates            = []
 rebalanced_portfolio_values = []

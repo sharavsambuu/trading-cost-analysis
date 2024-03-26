@@ -55,12 +55,12 @@ df
 
 # 0.15% for the commission
 # 0.2%  for the spread and slippage
-commission_percentage      = 0.0015 # 0.15%
-spread_slippage_percentage = 0.002  # 0.2%
+commission_percentage      = 0.15/100.0 # 0.15%
+spread_slippage_percentage = 0.2 /100.0 # 0.2%
 transaction_cost_log_0     = np.log(1-commission_percentage) + np.log(1-spread_slippage_percentage)
 
 # Applying transaction cost as 0.5%
-transaction_cost_percentage = 0.005 # 0.5%
+transaction_cost_percentage = 0.5/100.0 # 0.5%
 transaction_cost_log_1      = np.log(1-transaction_cost_percentage)
 
 # Adjusting with the different transaction costs

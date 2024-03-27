@@ -7,14 +7,13 @@
 
 # Todo
 
-  - Try to apply cost model on higher timeframe as specified on following 
-    https://github.com/MicroBioScopicData/Cryptos_Analysis
+  - Try to track bid ask spreads from random brokerages, and also crypto brokerages as well
+    Maybe have to write some script to tracks from MT5 platform etc...
 
-  - Try to estimate spread_slippage levels for different timeframes
+  - Try to estimate half spread rates and see their stats and come up with with number
 
-  - Compare it to result backtested on 1m mapped
-
-  - Try out different spread_slippage numbers
+  - Try to apply spread cost derived from half spread rates in backtesting, find out where can I
+    apply it, on entry and exit prices or use it as general trading cost as percentage etc...
 
 
 

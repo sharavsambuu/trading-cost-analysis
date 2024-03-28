@@ -131,25 +131,12 @@
     - Install python3.9 windows version
         https://www.python.org/downloads/windows/
     - Install MetaTrader5 windows version
-        cd /home/sambu/.wine/drive_c/users/sambu/Local Settings/Application Data/Programs/Python/Python39
-	or
-	cd /home/sambu/.wine/drive_c/users/sambu/AppData/Local/Programs/Python/Python39
-        wine python3.9.exe -m pip install --upgrade pip
-        wine python3.9.exe -m pip install MetaTrader5
-        wine python3.9.exe -m pip install rpyc
-    - Run wine metatrader5 connector
-        ./run_mt5_windows.sh
-            source env/bin/activate
-            python -m mt5linux "/home/sambu/.wine/drive_c/users/sambu/Local Settings/Application Data/Programs/Python/Python39/python.exe"
-    - MetaTrader5 on linux, https://pypi.org/project/mt5linux/
     - https://www.mql5.com/en/docs/python_metatrader5/mt5copyticksfrom_py
-
-    - It looks like mt5linux doesn't fully support windows native package MetaTrader5 
-      so have to run some of python scripts through the python in the wine.
+    - It looks like mt5linux doesn't fully support windows native package MetaTrader5 so have to run some of python scripts through the python in the wine.
     - Install windows based requirements through wine
-      wine python -m pip install -r requirements_win.txt
+        wine python -m pip install -r requirements_win.txt
     - Run windows version of python 
-      wine python win_half_spread_rate_exps.py
+        wine python win_half_spread_rate_exps.py
     
 
 

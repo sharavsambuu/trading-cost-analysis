@@ -57,12 +57,12 @@ def load_latest_ticks(mt5, instrument, delta_seconds=40):
 
 
 #%%
-def aggregate_bars(input_ticks, timeframe='1min'):
+def aggregate_bars(input_ticks, timeframe='1min', pip_unit=0.0001):
     ticks                     = input_ticks.copy()
     ticks['spread'          ] = ticks['ask'] - ticks['bid']
     ticks['half_spread'     ] = ticks['spread'] / 2.0
     ticks['mid_price'       ] = (ticks['ask'] + ticks['bid']) / 2.0
-    ticks['half_spread_rate'] = ticks['half_spread']/ticks['mid_price']
+    ticks['half_spread_rate'] = ticks['half_spread']/(ticks['mid_price'])*100.0
     x_df = ticks.resample(timeframe).agg({
             'mid_price'        : 'ohlc',
             'volume'           : 'sum' , # Volume
@@ -74,10 +74,10 @@ def aggregate_bars(input_ticks, timeframe='1min'):
 
 
 #%%
-instrument = "EURUSD"
+instrument = "USDJPY"
 all_ticks  =  load_prev_ticks(mt5=mt5, instrument=instrument)
 
-m_df  = aggregate_bars(all_ticks, '1min')
+m_df  = aggregate_bars(all_ticks, timeframe='1min')
 m_len = len(m_df)
 
 print(f"loaded 1minute bars, len : {m_len}")
@@ -91,7 +91,7 @@ while True:
     all_ticks = all_ticks[~all_ticks.index.duplicated(keep='last')]
     all_ticks = all_ticks.dropna()
 
-    m_df      = aggregate_bars(all_ticks, '1min')
+    m_df      = aggregate_bars(all_ticks, timeframe='1min')
     new_m_len = len(m_df)
 
     if new_m_len>m_len:

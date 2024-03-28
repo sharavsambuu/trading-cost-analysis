@@ -142,6 +142,14 @@
             source env/bin/activate
             python -m mt5linux "/home/sambu/.wine/drive_c/users/sambu/Local Settings/Application Data/Programs/Python/Python39/python.exe"
     - MetaTrader5 on linux, https://pypi.org/project/mt5linux/
+    - https://www.mql5.com/en/docs/python_metatrader5/mt5copyticksfrom_py
+
+    - It looks like mt5linux doesn't fully support windows native package MetaTrader5 
+      so have to run some of python scripts through the python in the wine.
+    - Install windows based requirements through wine
+      wine python -m pip install -r requirements_win.txt
+    - Run windows version of python 
+      wine python win_half_spread_rate_exps.py
     
 
 

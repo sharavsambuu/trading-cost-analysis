@@ -1,0 +1,15 @@
+MetaTrader5
+statsmodels
+scipy
+matplotlib
+mplfinance
+jupyter
+quantstats
+streamlit
+pandas
+numpy
+selenium
+beautifulsoup4
+webdriver-manager
+click
+yfinance

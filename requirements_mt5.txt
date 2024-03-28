@@ -1,0 +1,16 @@
+mt5linux
+statsmodels
+scipy
+matplotlib
+mplfinance
+jupyter
+TA-Lib
+quantstats
+streamlit
+pandas
+numpy
+selenium
+beautifulsoup4
+webdriver-manager
+click
+yfinance

@@ -125,6 +125,25 @@
 
     
 
+# MetaTrader5 and Linux related stuffs
+
+    - Install wine
+    - Install python3.9 windows version
+        https://www.python.org/downloads/windows/
+    - Install MetaTrader5 windows version
+        cd /home/sambu/.wine/drive_c/users/sambu/Local Settings/Application Data/Programs/Python/Python39
+	or
+	cd /home/sambu/.wine/drive_c/users/sambu/AppData/Local/Programs/Python/Python39
+        wine python3.9.exe -m pip install --upgrade pip
+        wine python3.9.exe -m pip install MetaTrader5
+        wine python3.9.exe -m pip install rpyc
+    - Run wine metatrader5 connector
+        ./run_mt5_windows.sh
+            source env/bin/activate
+            python -m mt5linux "/home/sambu/.wine/drive_c/users/sambu/Local Settings/Application Data/Programs/Python/Python39/python.exe"
+    - MetaTrader5 on linux, https://pypi.org/project/mt5linux/
+    
+
 
 
 

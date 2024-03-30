@@ -7,6 +7,9 @@
 
 # Todo
 
+  - Download signification amount of tick data from some FX brokers
+    Analyze Half Spread Rate on all time history
+
   - Try to track bid ask spreads from random brokerages, and also crypto brokerages as well
     Maybe have to write some script to tracks from MT5 platform etc...
 
@@ -14,6 +17,13 @@
 
   - Try to apply spread cost derived from half spread rates in backtesting, find out where can I
     apply it, on entry and exit prices or use it as general trading cost as percentage etc...
+
+  - Estimate trading cost for single symbol in interactive brokers, make sure to include
+    Select random strategy let's say RSI 
+    Estimate slippage cost
+    Estimate spread cost
+    Estimate commisison cost
+    
 
 
 

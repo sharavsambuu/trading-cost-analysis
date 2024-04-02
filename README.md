@@ -133,6 +133,11 @@
     https://www.econstor.eu/bitstream/10419/216539/1/cesifo1_wp8143.pdf
 
 
+  - Contract specific trading cost and optimal execution strategy
+
+    https://quantfiction.com/2019/08/17/contract-specific-trading-costs-and-optimal-execution-strategy/
+
+
     
 
 # MetaTrader5 and Linux related stuffs

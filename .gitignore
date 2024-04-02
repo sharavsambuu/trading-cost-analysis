@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 data/
+
+data_mt5_ticks/

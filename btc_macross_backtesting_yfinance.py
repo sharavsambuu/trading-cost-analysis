@@ -42,8 +42,8 @@ df.dropna(inplace=True)
 #%%
 # Signal extraction
 
-df['MA50' ] = df['Close'].rolling(window=20).mean()
-df['MA200'] = df['Close'].rolling(window=50).mean()
+df['MA50' ] = df['Close'].rolling(window=50 ).mean()
+df['MA200'] = df['Close'].rolling(window=150).mean()
 
 df['Signal'] = 0
 df.loc[((df['MA50'] > df['MA200']) & (df['MA50'].shift(1) <= df['MA200'].shift(1))), 'Signal'] =  1
@@ -96,7 +96,7 @@ for index, row in df.iterrows():
             exit_timestamp = index
             exit_price     = row['Price'] 
             pct_change     = (exit_price - entry_price) / entry_price
-            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
+            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change, position))
         # Enter new position
         if row['Signal'] == 1:
             entry_timestamp = index
@@ -106,15 +106,18 @@ for index, row in df.iterrows():
             entry_price     = row['Price']
         position = row['Signal']
 
-position_df = pd.DataFrame(position_history, columns=['EntryTime', 'ExitTime', 'EntryPrice', 'ExitPrice', 'Return'])
+position_df = pd.DataFrame(position_history, columns=['EntryTime', 'ExitTime', 'EntryPrice', 'ExitPrice', 'Return', 'Position'])
 position_df = position_df.set_index(pd.DatetimeIndex(position_df['EntryTime']))
 
 position_df
 
 
 #%%
+position_df['StrategyReturn'] = position_df['Return'] * position_df['Position']
+position_df['StrategyCumsum'] = position_df['StrategyReturn'].cumsum()
+
 # Naive cumulative sum
-position_df['Return'].cumsum().plot()
+position_df['StrategyCumsum'].plot()
 
 
 #%%
@@ -123,14 +126,14 @@ position_df['Return'].cumsum().plot()
 #%%
 # Cost adjustments
 
-position_df['LogReturn'] = (1+position_df['Return']).apply(np.log)
+position_df['LogReturn'] = (1+position_df['StrategyReturn']).apply(np.log)
 
 slippage_pct  = 0.005 # 0.5BPS 
 taker_fee_pct = 0.05  # Binance taker fee is 0.05%
 transaction_cost_log = np.log(1-slippage_pct/100.0) + np.log(1-taker_fee_pct/100.0)
 position_df['AdjustedLogReturn'] = position_df['LogReturn']  + transaction_cost_log
 
-position_df['CumRet'            ] = 1+position_df['Return'].cumsum()
+position_df['CumRet'            ] = 1+position_df['StrategyReturn'].cumsum()
 position_df['CostAdjustedCumRet'] = position_df['AdjustedLogReturn'].cumsum().apply(np.exp)
 
 #%%

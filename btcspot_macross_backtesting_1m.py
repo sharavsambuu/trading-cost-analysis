@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 
 
 #%%
-df_ = pd.read_csv("./data/crypto-spot/BTCUSDT.csv", parse_dates=True, index_col=0)
+df_ = pd.read_csv("./data/BTCUSDT/BTCUSDT.csv", parse_dates=True, index_col=0)
 df_.index = pd.to_datetime(df_.index, format='mixed')
 df_.index = pd.DatetimeIndex(df_.index)
 df_
@@ -134,7 +134,7 @@ for index, row in df_eval.iterrows():
             exit_timestamp = index
             exit_price     = row['Close']
             pct_change     = (exit_price - entry_price) / entry_price
-            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change))
+            position_history.append((entry_timestamp, exit_timestamp, entry_price, exit_price, pct_change, position))
 
         # Enter new position
         if row['Signal'] == 1:
@@ -147,7 +147,7 @@ for index, row in df_eval.iterrows():
 
         position = row['Signal']
 
-position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change'])
+position_df = pd.DataFrame(position_history, columns=['Entry Time', 'Exit Time', 'Entry Price', 'Exit Price', 'Pct Change', 'Position'])
 
 position_df
 
@@ -155,8 +155,13 @@ position_df
 
 
 #%%
-# Naive strategy performance
-position_df['Pct Change'].cumsum().plot()
+position_df['StrategyReturn'] = position_df['Pct Change'] * position_df['Position']
+position_df['StrategyCumsum'] = position_df['StrategyReturn'].cumsum()
+
+# Naive cumulative sum
+position_df['StrategyCumsum'].plot()
+
+#%%
 
 
 #%%
@@ -164,13 +169,13 @@ position_df['Pct Change'].cumsum().plot()
 
 #%%
 # Cost adjustment
-position_df['LogReturn'] = (1+position_df['Pct Change']).apply(np.log)
+position_df['LogReturn'] = (1+position_df['StrategyReturn']).apply(np.log)
 
 taker_fee_pct        = 0.05  # Binance taker fee is 0.05%
 transaction_cost_log = np.log(1-taker_fee_pct/100.0)
 position_df['AdjustedLogReturn'] = position_df['LogReturn'] + transaction_cost_log
 
-position_df['CumRet'            ] = 1+position_df['Pct Change'].cumsum()
+position_df['CumRet'            ] = 1+position_df['StrategyReturn'].cumsum()
 position_df['CostAdjustedCumRet'] = position_df['AdjustedLogReturn'].cumsum().apply(np.exp)
 
 

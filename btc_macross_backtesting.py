@@ -54,12 +54,12 @@ df.dropna(inplace=True)
 #%%
 # Signal extraction
 
-df['MA50' ] = df['Close'].rolling(window=20).mean()
-df['MA200'] = df['Close'].rolling(window=50).mean()
+df['MAFAST'] = df['Close'].rolling(window= 70).mean()
+df['MASLOW'] = df['Close'].rolling(window=250).mean()
 
 df['Signal'] = 0
-df.loc[((df['MA50'] > df['MA200']) & (df['MA50'].shift(1) <= df['MA200'].shift(1))), 'Signal'] =  1
-df.loc[((df['MA50'] < df['MA200']) & (df['MA50'].shift(1) >= df['MA200'].shift(1))), 'Signal'] = -1
+df.loc[((df['MAFAST'] > df['MASLOW']) & (df['MAFAST'].shift(1) <= df['MASLOW'].shift(1))), 'Signal'] =  1
+df.loc[((df['MAFAST'] < df['MASLOW']) & (df['MAFAST'].shift(1) >= df['MASLOW'].shift(1))), 'Signal'] = -1
 
 
 #%%
@@ -74,8 +74,8 @@ plot_df = df["2023-02-01":"2023-03-10"]
 fig, ax1 = plt.subplots(1, figsize=(28, 12), sharex=True)
 
 ax1.plot(plot_df.index, plot_df['Close'], label='Close', color='black')
-ax1.plot(plot_df['MA200'], color='blue' )
-ax1.plot(plot_df['MA50' ], color='green')
+ax1.plot(plot_df['MASLOW'], color='blue' )
+ax1.plot(plot_df['MAFAST' ], color='green')
 ax1.plot(plot_df[plot_df['Signal'] ==  1].index, plot_df[plot_df['Signal'] ==  1]['Close'], '^', markersize=8, color='green', label='Long' )
 ax1.plot(plot_df[plot_df['Signal'] == -1].index, plot_df[plot_df['Signal'] == -1]['Close'], 'v', markersize=8, color='red'  , label='Short')
 ax1.set_ylabel('Price')
